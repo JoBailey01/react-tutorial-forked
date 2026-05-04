@@ -1,9 +1,12 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 function Square({ value, onSquareClick, squareNum, winSquare }) {
   //console.error(">|"+squareColour+"|");
   return (
-    <button className={winSquare? "win-square" : "square"} onClick={() => onSquareClick(squareNum)}>
+    <button
+      className={winSquare ? "win-square" : "square"}
+      onClick={() => onSquareClick(squareNum)}
+    >
       {value}
     </button>
   );
@@ -19,9 +22,9 @@ function Board({ xIsNext, squares, onPlay }) {
     }
     const nextSquares = squares.slice();
     if (xIsNext) {
-      nextSquares[i] = 'X';
+      nextSquares[i] = "X";
     } else {
-      nextSquares[i] = 'O';
+      nextSquares[i] = "O";
     }
     onPlay(nextSquares);
   }
@@ -29,7 +32,7 @@ function Board({ xIsNext, squares, onPlay }) {
   const winner = calculateWinner(squares);
   let status;
   if (winner[0]) {
-    status = 'Winner: ' + winner[0];
+    status = "Winner: " + winner[0];
     let tempArray = Array(9).fill(false);
     tempArray[winner[1]] = true;
     tempArray[winner[2]] = true;
@@ -38,10 +41,10 @@ function Board({ xIsNext, squares, onPlay }) {
     highlights = tempArray;
   } else {
     //Determine whether or not a draw has occurred (i.e., if the board is full)
-    status = 'Draw!';
-    for(let i = 0;i < squares.length;i++){
-      if(!squares[i]){
-        status = 'Next player: ' + (xIsNext ? 'X' : 'O');
+    status = "Draw!";
+    for (let i = 0; i < squares.length; i++) {
+      if (!squares[i]) {
+        status = "Next player: " + (xIsNext ? "X" : "O");
         break;
       }
     }
@@ -49,23 +52,30 @@ function Board({ xIsNext, squares, onPlay }) {
 
   //Generate rows
   var rows = [];
-  for(var i = 0;i < 3;i++){
+  for (var i = 0; i < 3; i++) {
     var thisRow = [];
-    for(var j = 0;j < 3;j++){
-      var index = j+(i*3);
+    for (var j = 0; j < 3; j++) {
+      var index = j + i * 3;
       //(index) => {return squares[index]}
       //console.error("|"+index+"|");
       let winSquare = highlights[index];
       thisRow.push(
-        <Square key={index} value={squares[index]}
-          onSquareClick={function(k) {return handleClick(k)}}
+        <Square
+          key={index}
+          value={squares[index]}
+          onSquareClick={function (k) {
+            return handleClick(k);
+          }}
           squareNum={index}
           winSquare={winSquare}
-          />
-
+        />
       );
     }
-    rows.push(<div key={i} className = "board-row">{thisRow}</div>);
+    rows.push(
+      <div key={i} className="board-row">
+        {thisRow}
+      </div>
+    );
   }
   //squares = ["X","X",null,"O"];
 
@@ -111,35 +121,35 @@ export default function Game() {
   });*/
 
   var moves = [];
-  for(let i = 0;i < history.length;i++){
+  for (let i = 0; i < history.length; i++) {
     let moveData = "";
     //Compute recent move history, if applicable
-    if(i > 0){
-      for(let j = 0;j < 9;j++){
-        if(history[i][j] != history[i-1][j]){
-          let row = Math.floor(j/3);
-          let col = j - (row*3);
+    if (i > 0) {
+      for (let j = 0; j < 9; j++) {
+        if (history[i][j] != history[i - 1][j]) {
+          let row = Math.floor(j / 3);
+          let col = j - row * 3;
           row++;
           col++;
-          moveData = " (" + (currentMove%2 ? "O@" : "X@") + row + "," + col + ")";
+          moveData =
+            " (" + (currentMove % 2 ? "O@" : "X@") + row + "," + col + ")";
         }
       }
     }
 
+    if (!history[i]) break; //Ignore null
+    let description;
+    if (i == currentMove) {
+      description = "You are at move #" + i + moveData;
+    } else if (i == 0) {
+      description = "Go to game start";
+    } else {
+      description = "Go to move #" + i + moveData;
+    }
 
-    if(!history[i]) break; //Ignore null
-      let description;
-      if (i == currentMove){
-        description = 'You are at move #' + i + moveData;
-      } else if (i == 0){
-        description = 'Go to game start';
-      } else {
-        description = 'Go to move #' + i + moveData;
-      }
-    
     moves.push(
       <li key={i}>
-          <button onClick={() => jumpTo(i)}>{description}</button>
+        <button onClick={() => jumpTo(i)}>{description}</button>
       </li>
     );
   }
@@ -151,7 +161,13 @@ export default function Game() {
         <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
       </div>
       <div className="game-info">
-        <button onClick={()=>{setReverseMoves(!reverseMoves)}}>Reverse move order</button>
+        <button
+          onClick={() => {
+            setReverseMoves(!reverseMoves);
+          }}
+        >
+          Reverse move order
+        </button>
         <ol>{moves}</ol>
       </div>
     </div>
